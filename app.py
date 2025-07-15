@@ -12,9 +12,17 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Configuration
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '7746829363:AAHtYR9C2GvyUsRDCr1gv2m63aGIplhuFFw')
-WEBHOOK_URL = os.getenv('WEBHOOK_URL', 'https://dragonflyBOT.pythonanywhere.com/webhook')
-CUSTOM_API_URL = os.getenv('CUSTOM_API_URL', 'https://telegram-bot-api-hvdg.onrender.com')
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+WEBHOOK_URL = os.getenv('WEBHOOK_URL')
+CUSTOM_API_URL = os.getenv('CUSTOM_API_URL')
+
+# Ensure required environment variables are set
+if not TELEGRAM_BOT_TOKEN:
+    raise RuntimeError('TELEGRAM_BOT_TOKEN environment variable is required')
+if not WEBHOOK_URL:
+    raise RuntimeError('WEBHOOK_URL environment variable is required')
+if not CUSTOM_API_URL:
+    raise RuntimeError('CUSTOM_API_URL environment variable is required')
 
 class TelegramBot:
     def __init__(self, token):
