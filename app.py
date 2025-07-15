@@ -452,5 +452,29 @@ def set_webhook_route():
     logger.info(f"Webhook set: {response.json()}")
     return jsonify({'webhook_url': webhook_url, 'telegram_response': response.json()})
 
+def logout_bot_cloud():
+    """Logout the bot from the cloud Bot API server."""
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/logOut"
+    response = requests.post(url)
+    logger.info(f"Cloud Bot API logOut response: {response.json()}")
+    return response.json()
+
+def login_bot_local():
+    """Login the bot to the local Bot API server."""
+    url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/logIn"
+    response = requests.post(url)
+    logger.info(f"Local Bot API logIn response: {response.json()}")
+    return response.json()
+
+@app.route('/logout_cloud', methods=['POST'])
+def logout_cloud_route():
+    result = logout_bot_cloud()
+    return jsonify(result)
+
+@app.route('/login_local', methods=['POST'])
+def login_local_route():
+    result = login_bot_local()
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8081)))
