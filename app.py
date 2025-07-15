@@ -442,13 +442,14 @@ def set_webhook_route():
     logger.info(f"Webhook set: {response.json()}")
     return jsonify({'webhook_url': webhook_url, 'telegram_response': response.json()})
 
+@app.before_first_request
+def set_webhook_on_startup():
+    base_url = request.host_url.rstrip('/')
+    webhook_url = f"{base_url}/webhook"
+    url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
+    data = {'url': webhook_url}
+    response = requests.post(url, json=data, proxies={"http": None, "https": None})
+    logger.info(f"Webhook set on startup: {response.json()} (URL: {webhook_url})")
+
 if __name__ == '__main__':
-    @app.before_first_request
-    def set_webhook_on_startup():
-        base_url = request.host_url.rstrip('/')
-        webhook_url = f"{base_url}/webhook"
-        url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
-        data = {'url': webhook_url}
-        response = requests.post(url, json=data, proxies={"http": None, "https": None})
-        logger.info(f"Webhook set on startup: {response.json()} (URL: {webhook_url})")
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8081)))
