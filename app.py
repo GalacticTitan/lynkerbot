@@ -131,6 +131,9 @@ webhook_set = False
 def webhook():
     """Handle incoming webhook from Telegram"""
     try:
+        # Log headers and raw body for debugging
+        logger.info(f"Webhook headers: {dict(request.headers)}")
+        logger.info(f"Webhook raw data: {request.get_data(as_text=True)}")
         data = request.get_json()
         logger.info(f"Received webhook: {json.dumps(data, indent=2)}")
         
@@ -432,7 +435,7 @@ def health_check():
         webhook_url = f"{base_url}/webhook"
         url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
         data = {'url': webhook_url}
-        response = requests.post(url, json=data, proxies={"http": None, "https": None})
+        response = requests.post(url, json=data)
         logger.info(f"Webhook set on first /health: {response.json()} (URL: {webhook_url})")
         webhook_set = True
     return jsonify({
@@ -448,7 +451,7 @@ def set_webhook_route():
     webhook_url = f"{base_url}/webhook"
     url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
     data = {'url': webhook_url}
-    response = requests.post(url, json=data, proxies={"http": None, "https": None})
+    response = requests.post(url, json=data)
     logger.info(f"Webhook set: {response.json()}")
     return jsonify({'webhook_url': webhook_url, 'telegram_response': response.json()})
 
