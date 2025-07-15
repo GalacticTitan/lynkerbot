@@ -433,20 +433,10 @@ def health_check():
     if not webhook_set:
         base_url = request.host_url.rstrip('/')
         webhook_url = f"{base_url}/webhook"
-        # Ensure CUSTOM_API_URL is https for webhook
-        custom_api_url = CUSTOM_API_URL or ""
-        if custom_api_url.startswith("http://"):
-            custom_api_url = "https://" + custom_api_url[len("http://"):]
-        url = f"{custom_api_url}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
+        url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
         data = {'url': webhook_url}
         response = requests.post(url, json=data)
-        try:
-            json_response = response.json()
-        except Exception as e:
-            logger.error(f"Failed to decode JSON from webhook set response: {response.text}")
-            json_response = {"error": "Invalid JSON response", "raw": response.text}
-
-        logger.info(f"Webhook set on first /health: {json_response} (URL: {webhook_url})")
+        logger.info(f"Webhook set on first /health: {response.json()} (URL: {webhook_url})")
         webhook_set = True
     return jsonify({
         'status': 'healthy',
@@ -459,21 +449,11 @@ def set_webhook_route():
     """Set webhook URL dynamically based on current host"""
     base_url = request.host_url.rstrip('/')  # e.g., https://yourdomain.com
     webhook_url = f"{base_url}/webhook"
-    # Ensure CUSTOM_API_URL is https for webhook
-    custom_api_url = CUSTOM_API_URL or ""
-    if custom_api_url.startswith("http://"):
-        custom_api_url = "https://" + custom_api_url[len("http://"):]
-    url = f"{custom_api_url}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
+    url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
     data = {'url': webhook_url}
     response = requests.post(url, json=data)
-    try:
-        json_response = response.json()
-    except Exception as e:
-        logger.error(f"Failed to decode JSON from webhook set response: {response.text}")
-        json_response = {"error": "Invalid JSON response", "raw": response.text}
-
-    logger.info(f"Webhook set: {json_response}")
-    return jsonify({'webhook_url': webhook_url, 'telegram_response': json_response})
+    logger.info(f"Webhook set: {response.json()}")
+    return jsonify({'webhook_url': webhook_url, 'telegram_response': response.json()})
 
 def logout_bot_cloud():
     """Logout the bot from the cloud Bot API server."""
