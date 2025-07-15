@@ -13,14 +13,11 @@ app = Flask(__name__)
 
 # Configuration
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-WEBHOOK_URL = os.getenv('WEBHOOK_URL')
 CUSTOM_API_URL = os.getenv('CUSTOM_API_URL')
 
 # Ensure required environment variables are set
 if not TELEGRAM_BOT_TOKEN:
     raise RuntimeError('TELEGRAM_BOT_TOKEN environment variable is required')
-if not WEBHOOK_URL:
-    raise RuntimeError('WEBHOOK_URL environment variable is required')
 if not CUSTOM_API_URL:
     raise RuntimeError('CUSTOM_API_URL environment variable is required')
 
