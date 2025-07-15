@@ -445,5 +445,5 @@ if __name__ == '__main__':
         url = f"{CUSTOM_API_URL}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
         data = {'url': webhook_url}
         response = requests.post(url, json=data, proxies={"http": None, "https": None})
-        logger.info(f"Webhook set on startup: {response.json()}")
-    pass
+        logger.info(f"Webhook set on startup: {response.json()} (URL: {webhook_url})")
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8081)))
