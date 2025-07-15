@@ -440,7 +440,13 @@ def health_check():
         url = f"{custom_api_url}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
         data = {'url': webhook_url}
         response = requests.post(url, json=data)
-        logger.info(f"Webhook set on first /health: {response.json()} (URL: {webhook_url})")
+        try:
+            json_response = response.json()
+        except Exception as e:
+            logger.error(f"Failed to decode JSON from webhook set response: {response.text}")
+            json_response = {"error": "Invalid JSON response", "raw": response.text}
+
+        logger.info(f"Webhook set on first /health: {json_response} (URL: {webhook_url})")
         webhook_set = True
     return jsonify({
         'status': 'healthy',
@@ -460,8 +466,14 @@ def set_webhook_route():
     url = f"{custom_api_url}/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
     data = {'url': webhook_url}
     response = requests.post(url, json=data)
-    logger.info(f"Webhook set: {response.json()}")
-    return jsonify({'webhook_url': webhook_url, 'telegram_response': response.json()})
+    try:
+        json_response = response.json()
+    except Exception as e:
+        logger.error(f"Failed to decode JSON from webhook set response: {response.text}")
+        json_response = {"error": "Invalid JSON response", "raw": response.text}
+
+    logger.info(f"Webhook set: {json_response}")
+    return jsonify({'webhook_url': webhook_url, 'telegram_response': json_response})
 
 def logout_bot_cloud():
     """Logout the bot from the cloud Bot API server."""
